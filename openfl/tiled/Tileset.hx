@@ -27,8 +27,6 @@ import openfl.geom.Rectangle;
 
 import haxe.io.Path;
 
-import openfl.display.Tilesheet;
-
 class Tileset {
 
 	/** The TiledMap object this tileset belongs to */

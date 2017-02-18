@@ -30,8 +30,6 @@ import openfl.events.Event;
 
 import haxe.io.Path;
 
-import openfl.display.Tilesheet;
-
 import openfl.tiled.display.Renderer;
 
 #if !flash

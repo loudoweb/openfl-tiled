@@ -29,8 +29,6 @@ import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import openfl.utils.Endian;
 
-import openfl.display.Tilesheet;
-
 class Layer {
 
 	/** The name of this layer */
