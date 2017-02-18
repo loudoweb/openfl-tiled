@@ -33,7 +33,7 @@ import haxe.io.Path;
 import openfl.tiled.display.Renderer;
 
 #if !flash
-import openfl.tiled.display.TilesheetRenderer;
+import openfl.tiled.display.TilemapRenderer;
 #else
 import openfl.tiled.display.CopyPixelsRenderer;
 #end
