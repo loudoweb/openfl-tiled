@@ -90,7 +90,7 @@ class TiledMap extends Sprite {
 
 	public var renderer(default, null):Renderer;
 
-	private function new(path:String, renderer:Renderer, ?render:Bool = true) {
+	private function new(path:String, ?renderer:Renderer, ?render:Bool = false) {
 		super();
 
 		this.path = path;
@@ -142,7 +142,7 @@ class TiledMap extends Sprite {
 	 * @param renderer Add your own renderer implementation here
 	 * @return A TiledMap object
 	 */
-	public static function fromAssetsWithAlternativeRenderer(path:String, renderer:Renderer,
+	public static function fromAssetsWithAlternativeRenderer(path:String, ?renderer:Renderer,
 			?render:Bool = true):TiledMap {
 		return new TiledMap(path, renderer, render);
 	}
