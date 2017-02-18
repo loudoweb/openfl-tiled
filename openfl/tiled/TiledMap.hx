@@ -21,22 +21,28 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.geom.Rectangle;
-import flash.geom.Point;
-import flash.display.Sprite;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.events.Event;
+import openfl.geom.Rectangle;
+import openfl.geom.Point;
+import openfl.display.Sprite;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.events.Event;
 
 import haxe.io.Path;
 
-import openfl.display.Tilesheet;
+//import openfl.tiled.display.Renderer;
+
+//#if !flash
+//import openfl.tiled.display.TilesheetRenderer;
+//#else
+//import openfl.tiled.display.CopyPixelsRenderer;
+//#end
 
 /**
  * This class represents a TILED map
  * @author Christopher Kaster
  */
-class TiledMap extends Sprite {
+class TiledMap {
 
 	/** The path of the map file */
 	public var path(default, null):String;
@@ -63,10 +69,10 @@ class TiledMap extends Sprite {
 	public var tileHeight(default, null):Int;
 
 	/** The background color of the map */
-	public var backgroundColor(default, null):Int;
+	public var backgroundColor(default, null):UInt;
 
 	/** All tilesets the map is using */
-	public var tilesets(default, null):Array<Tileset>;
+	public var tilesets(default, null):Array<String>;
 
 	/** Contains all layers from this map */
 	public var layers(default, null):Array<Layer>;
@@ -80,208 +86,13 @@ class TiledMap extends Sprite {
 	/** All map properties */
 	public var properties(default, null):Map<String, String>;
 
-	private var tilesheets:Map<Int, Tilesheet>;
-	private var tileRects:Array<Rectangle>;
-	private var backgroundColorSet:Bool = false;
+	public var backgroundColorSet(default, null):Bool = false;
 
-	private function new(path:String) {
-		super();
+	//public var renderer(default, null):Renderer;
 
-		this.path = path;
-
-		this.tilesheets = new Map<Int, Tilesheet>();
-		this.tileRects = new Array<Rectangle>();
-
-		var xml = Helper.getText(path);
-
+	public function new(xml:String) {
 		parseXML(xml);
-
-		// create tilesheets
-		for(tileset in this.tilesets) {
-			this.tilesheets.set(tileset.firstGID, new Tilesheet(tileset.image.texture));
-		}
-
-		#if flash
-		this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStageFlash);
-		#else
-		this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-		#end
-	}
-
-	// onAddedToStage for non-flash targets
-	private function onAddedToStage(e:Event) {
-		this.graphics.clear();
-
-		for(layer in this.layers) {
-
-			var drawList:Array<Float> = new Array<Float>();
-			var gidCounter:Int = 0;
-
-			if(layer.visible) {
-				for(y in 0...this.heightInTiles) {
-					for(x in 0...this.widthInTiles) {
-						var nextGID = layer.tiles[gidCounter].gid;
-
-						if(nextGID != 0) {
-							var point:Point = new Point();
-
-							switch (orientation) {
-								case TiledMapOrientation.Orthogonal:
-									point = new Point(x * this.tileWidth, y * this.tileHeight);
-								case TiledMapOrientation.Isometric:
-									point = new Point((this.width + x - y - 1) * this.tileWidth * 0.5, (y + x) * this.tileHeight * 0.5);
-							}
-
-							var tileset:Tileset = getTilesetByGID(nextGID);
-
-							var tilesheet:Tilesheet = this.tilesheets.get(tileset.firstGID);
-
-							var rect:Rectangle = tileset.getTileRectByGID(nextGID);
-
-							var tileId:Int = -1;
-
-							var foundSomething:Bool = false;
-
-							for(r in this.tileRects) {
-								if(rectEquals(r, rect)) {
-									tileId = Lambda.indexOf(this.tileRects, r);
-
-									foundSomething = true;
-
-									break;
-								}
-							}
-
-							if(!foundSomething) {
-								tileRects.push(rect);
-							}
-
-							if(tileId < 0) {
-								tileId = this.tilesheets.get(tileset.firstGID).addTileRect(rect);
-							}
-
-							// add coordinates to draw list
-							drawList.push(point.x); // x coord
-							drawList.push(point.y); // y coord
-							drawList.push(tileId); // tile id
-							drawList.push(layer.opacity); // alpha channel
-						}
-
-						gidCounter++;
-					}
-				}
-			}
-
-			if(backgroundColorSet) {
-				this.fillBackground();
-			}
-
-			// draw layer
-			for(tileset in this.tilesets) {
-				var tilesheet:Tilesheet = this.tilesheets.get(tileset.firstGID);
-
-				tilesheet.drawTiles(this.graphics, drawList, true, Tilesheet.TILE_ALPHA);
-			}
-		}
-
-		for(imageLayer in this.imageLayers) {
-			var tilesheet:Tilesheet = new Tilesheet(imageLayer.image.texture);
-
-			var id = tilesheet.addTileRect(new Rectangle(0, 0, imageLayer.image.width, imageLayer.image.height));
-
-			var drawList:Array<Float> = new Array<Float>();
-
-			drawList.push(0);
-			drawList.push(0);
-			drawList.push(id);
-			drawList.push(imageLayer.opacity);
-
-			tilesheet.drawTiles(this.graphics, drawList, true, Tilesheet.TILE_ALPHA);
-		}
-	}
-
-	private function onAddedToStageFlash(e:Event) {
-		this.graphics.clear();
-
-		var bitmapData:BitmapData;
-
-		if(backgroundColorSet) {
-			bitmapData = new BitmapData(this.totalWidth, this.totalHeight, true, this.backgroundColor);
-		} else {
-			bitmapData = new BitmapData(this.totalWidth, this.totalHeight, true, 0x00000000);
-		}
-
-		for(layer in this.layers) {
-			var gidCounter:Int = 0;
-
-			if(layer.visible) {
-				for(y in 0...this.heightInTiles) {
-					for(x in 0...this.widthInTiles) {
-						var nextGID = layer.tiles[gidCounter].gid;
-
-						if(nextGID != 0) {
-							var point:Point = new Point();
-
-							switch (orientation) {
-								case TiledMapOrientation.Orthogonal:
-									point = new Point(x * this.tileWidth, y * this.tileHeight);
-								case TiledMapOrientation.Isometric:
-									point = new Point((this.width + x - y - 1) * this.tileWidth * 0.5, (y + x) * this.tileHeight * 0.5);
-							}
-
-							var tileset:Tileset = getTilesetByGID(nextGID);
-
-							var rect:Rectangle = tileset.getTileRectByGID(nextGID);
-
-							if(orientation == TiledMapOrientation.Isometric) {
-								point.x += this.totalWidth/2;
-							}
-
-							// copy pixels
-							bitmapData.copyPixels(tileset.image.texture, rect, point, null, null, true);
-						}
-
-						gidCounter++;
-					}
-				}
-			}
-		}
-
-		for(imageLayer in this.imageLayers) {
-			var rect = new Rectangle(0, 0, imageLayer.image.width, imageLayer.image.height);
-
-			bitmapData.copyPixels(imageLayer.image.texture, rect, new Point(0, 0), null, null, true);
-		}
-
-		var bitmap:Bitmap = new Bitmap(bitmapData);
-
-		if(orientation == TiledMapOrientation.Isometric) {
-			bitmap.x -= this.totalWidth/2;
-		}
-
-		this.addChild(bitmap);
-	}
-
-	private function fillBackground():Void {
-		this.graphics.beginFill(this.backgroundColor);
-
-		if(orientation == TiledMapOrientation.Orthogonal) {
-			this.graphics.drawRect(0, 0, this.totalWidth, this.totalHeight);
-		} else {
-			this.graphics.drawRect(-this.totalWidth/2, 0, this.totalWidth, this.totalHeight);
-		}
-
-		this.graphics.endFill();
-	}
-
-	/**
-	 * Creates a new TiledMap from an Assets
-	 * @param path The path to your asset
-	 * @return A TiledMap object
-	 */
-	public static function fromAssets(path:String):TiledMap {
-		return new TiledMap(path);
-	}
+        }
 
 	private function parseXML(xml:String) {
 		var xml = Xml.parse(xml).firstElement();
@@ -292,7 +103,7 @@ class TiledMap extends Sprite {
 			TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
 		this.tileWidth = Std.parseInt(xml.get("tilewidth"));
 		this.tileHeight = Std.parseInt(xml.get("tileheight"));
-		this.tilesets = new Array<Tileset>();
+		this.tilesets = new Array<String>();
 		this.layers = new Array<Layer>();
 		this.objectGroups = new Array<TiledObjectGroup>();
 		this.imageLayers = new Array<ImageLayer>();
@@ -309,23 +120,30 @@ class TiledMap extends Sprite {
 			backgroundColor = StringTools.replace(backgroundColor, "#", "0xff");
 
 			this.backgroundColor = Std.parseInt(backgroundColor);
+		} else {
+			this.backgroundColor = 0x00000000;
 		}
 
 		for (child in xml) {
 			if(Helper.isValidElement(child)) {
 				if (child.nodeName == "tileset") {
-					var tileset:Tileset = null;
-
+					var tileset:String = null;
 					if (child.get("source") != null) {
-						var prefix = Path.directory(this.path) + "/";
-						tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
-					} else {
-						tileset = Tileset.fromGenericXml(this, child.toString());
+						//var prefix = Path.directory(this.path) + "/";
+						tileset = child.get("source");
 					}
 
-					tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
+                                        // TODO expose child assets (or not?)
+					//if (child.get("source") != null) {
+					//	//var prefix = Path.directory(this.path) + "/";
+					//	tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
+					//} else {
+					//	tileset = Tileset.fromGenericXml(this, child.toString());
+					//}
 
-					this.tilesets.push(tileset);
+					//tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
+					if(tileset != null)
+						this.tilesets.push(tileset);
 				} else if (child.nodeName == "properties") {
 					for (property in child) {
 						if (!Helper.isValidElement(property))
@@ -353,17 +171,17 @@ class TiledMap extends Sprite {
 	 * Returns the Tileset which contains the given GID.
 	 * @return The tileset which contains the given GID, or if it doesn't exist "null"
 	 */
-	public function getTilesetByGID(gid:Int):Tileset {
-		var tileset:Tileset = null;
+	//public function getTilesetByGID(gid:Int):Tileset {
+	//	var tileset:Tileset = null;
 
-		for(t in this.tilesets) {
-			if(gid >= t.firstGID) {
-				tileset = t;
-			}
-		}
+	//	for(t in this.tilesets) {
+	//		if(gid >= t.firstGID) {
+	//			tileset = t;
+	//		}
+	//	}
 
-		return tileset;
-	}
+	//	return tileset;
+	//}
 
 	/**
 	 * Returns the total Width of the map
@@ -418,16 +236,12 @@ class TiledMap extends Sprite {
 	  * @return An TiledObject, null if there is no such object.
 	  */
 	public function getObjectByName(name:String, inObjectGroup:TiledObjectGroup):TiledObject {
-		for(object in inObjectGroup) {
+		for(object in inObjectGroup.objects) {
 			if(object.name == name) {
 				return object;
 			}
 		}
 
 		return null;
-	}
-
-	private function rectEquals(r1:Rectangle, r2:Rectangle):Bool {
-		return r1.x == r2.x && r1.y == r2.y && r1.width == r2.width && r1.height == r2.height;
 	}
 }

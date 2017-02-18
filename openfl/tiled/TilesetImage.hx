@@ -47,10 +47,9 @@ class TilesetImage {
 		// get fileName from path
 		this.fileName = source.substr(source.lastIndexOf("/") + 1, source.length);
 
-		#if !flash
 		var useTransparentColor = false;
-		var threshold:Int = -1;
-		var transparent:Int = 0x00000000;
+		var threshold:UInt = -1;
+		var transparent:UInt = 0x00000000;
 
 		if(trans != null) {
 			useTransparentColor = true;
@@ -60,20 +59,17 @@ class TilesetImage {
 
 			threshold = Std.parseInt(trans);
 		}
-		#end
 
 		// load image
-		this.texture = Helper.getBitmapData(this.source, mapPrefix);
+		//this.texture = Helper.getBitmapData(this.source, mapPrefix);
 
-		#if !flash
-		if(useTransparentColor) {
-			var rect = new Rectangle(0, 0, this.texture.width, this.texture.height);
-			var point = new Point(0, 0);
+		//if(useTransparentColor) {
+		//	var rect = new Rectangle(0, 0, this.texture.width, this.texture.height);
+		//	var point = new Point(0, 0);
 
-			this.texture.threshold(this.texture, rect, point, "==",
-				threshold, transparent, 0xFFFFFFFF, true);
-		}
-		#end
+		//	this.texture.threshold(this.texture, rect, point, "==",
+		//		threshold, transparent, 0xFFFFFFFF, true);
+		//}
 	}
 
 	private function get_width():Int {

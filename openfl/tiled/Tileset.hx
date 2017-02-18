@@ -27,12 +27,7 @@ import flash.geom.Rectangle;
 
 import haxe.io.Path;
 
-import openfl.display.Tilesheet;
-
 class Tileset {
-
-	/** The TiledMap object this tileset belongs to */
-	public var tiledMap(default, null):TiledMap;
 
 	/** The first GID this tileset has */
 	public var firstGID(default, null):Int;
@@ -70,9 +65,9 @@ class Tileset {
 	/** The tile offset */
 	public var offset(default, null):Point;
 
-	private function new(tiledMap:TiledMap, name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
-			properties:Map<String, String>, terrainTypes:Array<TerrainType>, image:TilesetImage, offset:Point) {
-		this.tiledMap = tiledMap;
+	private function new(name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
+			properties:Map<String, String>, terrainTypes:Array<TerrainType>, image:TilesetImage, offset:Point,
+			propertyTiles:Map<Int, PropertyTile>) {
 		this.name = name;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -81,6 +76,7 @@ class Tileset {
 		this.terrainTypes = terrainTypes;
 		this.image = image;
 		this.offset = offset;
+		this.propertyTiles = propertyTiles;
 	}
 
 	/** Sets the first GID. */
@@ -89,7 +85,7 @@ class Tileset {
 	}
 
 	/** Generates a new Tileset from the given Xml code */
-	public static function fromGenericXml(tiledMap:TiledMap, content:String):Tileset {
+	public static function fromGenericXml(content:String):Tileset {
 		var xml = Xml.parse(content).firstElement();
 
 		var name:String = xml.get("name");
@@ -120,8 +116,7 @@ class Tileset {
 				}
 
 				if (child.nodeName == "image") {
-					var prefix = Path.directory(tiledMap.path) + "/";
-					image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
+					image = new TilesetImage(child.get("source"), child.get("trans"));
 				}
 
 				if (child.nodeName == "terraintypes") {
@@ -159,8 +154,8 @@ class Tileset {
 			}
 		}
 
-		return new Tileset(tiledMap, name, tileWidth, tileHeight, spacing, properties, terrainTypes,
-			image, new Point(tileOffsetX, tileOffsetY));
+		return new Tileset(name, tileWidth, tileHeight, spacing, properties, terrainTypes,
+			image, new Point(tileOffsetX, tileOffsetY), propertyTiles);
 	}
 
 	/** Returns the BitmapData of the given GID */
