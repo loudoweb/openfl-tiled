@@ -23,7 +23,7 @@ package openfl.tiled;
 
 import haxe.io.Path;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 
 class Helper {
 

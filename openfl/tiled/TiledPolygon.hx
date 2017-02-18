@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 class TiledPolygon {
 

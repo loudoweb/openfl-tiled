@@ -1,7 +1,7 @@
 package;
 
-import flash.display.Bitmap;
-import flash.Lib;
+import openfl.display.Bitmap;
+import openfl.Lib;
 
 import openfl.tiled.TiledMap;
 

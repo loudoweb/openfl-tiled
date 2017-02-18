@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 
 class Tile {
 

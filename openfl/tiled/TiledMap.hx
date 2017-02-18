@@ -21,12 +21,12 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.geom.Rectangle;
-import flash.geom.Point;
-import flash.display.Sprite;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.events.Event;
+import openfl.geom.Rectangle;
+import openfl.geom.Point;
+import openfl.display.Sprite;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.events.Event;
 
 import haxe.io.Path;
 

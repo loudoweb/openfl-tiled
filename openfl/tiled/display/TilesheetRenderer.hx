@@ -1,8 +1,8 @@
 package openfl.tiled.display;
 
-import flash.display.Sprite;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.Sprite;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 
 import openfl.display.Tilesheet;
 
