@@ -116,7 +116,7 @@ class Tileset {
 				}
 
 				if (child.nodeName == "image") {
-					image = new TilesetImage(child.get("source"), child.get("trans"));
+					image = new TilesetImage(child.get("source"), child.get("trans"), Std.parseInt(child.get("width")), Std.parseInt(child.get("height")));
 				}
 
 				if (child.nodeName == "terraintypes") {
