@@ -32,8 +32,8 @@ class Tile {
 
     public var gid(default, null):Int;
     public var parent(default, null):Layer;
-    public var width(get_width, null):Int;
-    public var height(get_height, null):Int;
+    public var width(get, null):Int;
+    public var height(get, null):Int;
 
     public var flipped_diag(default, null):Bool;
     public var flipped_horz(default, null):Bool;
@@ -42,7 +42,7 @@ class Tile {
     // transform data
     private var dirty:Bool;
     private var _transform:Matrix;
-    public var transform(get_transform, null):Matrix;
+    public var transform(get, null):Matrix;
 
     private function new(gid:Int, parent:Layer) {
         this.parent = parent;
