@@ -1,3 +1,6 @@
+Dev seems to be MIA so I won't bother making any pull requests.
+I'll mostly update this so it doesn't break, but might end up doing some more later.
+
 [![Stories in Ready](https://badge.waffle.io/kasoki/openfl-tiled.png?label=ready)](http://waffle.io/kasoki/openfl-tiled)
 openfl-tiled
 =========
