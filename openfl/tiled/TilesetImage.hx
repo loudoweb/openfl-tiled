@@ -34,10 +34,10 @@ class TilesetImage {
 	public var fileName(default, null):String;
 
 	/** The width of this image */
-	public var width(get_width, null):Int;
+	public var width(get, null):Int;
 
 	/** The height of this image */
-	public var height(get_height, null):Int;
+	public var height(get, null):Int;
 
 	/** The image as BitmapData */
 	public var texture(default, null):BitmapData;

@@ -54,10 +54,10 @@ class TiledMap extends Sprite {
 	public var heightInTiles(default, null):Int;
 
 	/** The map width in pixels */
-	public var totalWidth(get_totalWidth, null):Int;
+	public var totalWidth(get, null):Int;
 
 	/** The map height in pixels */
-	public var totalHeight(get_totalHeight, null):Int;
+	public var totalHeight(get, null):Int;
 
 	/** TILED orientation: Orthogonal or Isometric */
 	public var orientation(default, null):TiledMapOrientation;

@@ -27,8 +27,8 @@ class Tile {
 
 	public var gid(default, null):Int;
 	public var parent(default, null):Layer;
-	public var width(get_width, null):Int;
-	public var height(get_height, null):Int;
+	public var width(get, null):Int;
+	public var height(get, null):Int;
 
 	private function new(gid:Int, parent:Layer) {
 		this.gid = gid;

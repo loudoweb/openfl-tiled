@@ -39,10 +39,10 @@ class Tileset {
 	public var name(default, null):String;
 
 	/** The width of the tileset image */
-	public var width(get_width, null):Int;
+	public var width(get, null):Int;
 
 	/** The height of the tileset image */
-	public var height(get_height, null):Int;
+	public var height(get, null):Int;
 
 	/** The width of one tile */
 	public var tileWidth(default, null):Int;
