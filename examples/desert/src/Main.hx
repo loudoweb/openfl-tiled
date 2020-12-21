@@ -1,9 +1,9 @@
 package;
 
-import flash.display.Bitmap;
-import flash.Lib;
-import flash.ui.Keyboard;
-import flash.events.KeyboardEvent;
+import openfl.display.Bitmap;
+import openfl.Lib;
+import openfl.ui.Keyboard;
+import openfl.events.KeyboardEvent;
 
 import openfl.tiled.TiledMap;
 

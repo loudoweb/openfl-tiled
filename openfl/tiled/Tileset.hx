@@ -21,9 +21,9 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.geom.Point;
-import flash.display.BitmapData;
-import flash.geom.Rectangle;
+import openfl.geom.Point;
+import openfl.display.BitmapData;
+import openfl.geom.Rectangle;
 
 import haxe.io.Path;
 
@@ -36,10 +36,10 @@ class Tileset {
 	public var name(default, null):String;
 
 	/** The width of the tileset image */
-	public var width(get_width, null):Int;
+	public var width(get, null):Int;
 
 	/** The height of the tileset image */
-	public var height(get_height, null):Int;
+	public var height(get, null):Int;
 
 	/** The width of one tile */
 	public var tileWidth(default, null):Int;
@@ -65,9 +65,11 @@ class Tileset {
 	/** The tile offset */
 	public var offset(default, null):Point;
 
-	private function new(name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
+	private function new(tiledMap:TiledMap, name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
 			properties:Map<String, String>, terrainTypes:Array<TerrainType>, image:TilesetImage, offset:Point,
 			propertyTiles:Map<Int, PropertyTile>) {
+		this.tiledMap = tiledMap;
+
 		this.name = name;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -154,7 +156,8 @@ class Tileset {
 			}
 		}
 
-		return new Tileset(name, tileWidth, tileHeight, spacing, properties, terrainTypes,
+		return new Tileset(tiledMap, name, tileWidth, tileHeight, spacing, properties, terrainTypes,
+
 			image, new Point(tileOffsetX, tileOffsetY), propertyTiles);
 	}
 

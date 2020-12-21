@@ -21,14 +21,15 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.display.BitmapData;
-import flash.geom.Matrix;
+import openfl.display.BitmapData;
 
 class Tile {
 
-    public static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-    public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
-    public static inline var FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+	public var gid(default, null):Int;
+	public var parent(default, null):Layer;
+	public var width(get, null):Int;
+	public var height(get, null):Int;
+
 
     public var gid(default, null):Int;
     public var parent(default, null):Layer;

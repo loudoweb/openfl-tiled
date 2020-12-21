@@ -30,13 +30,14 @@ import openfl.events.Event;
 
 import haxe.io.Path;
 
-//import openfl.tiled.display.Renderer;
+import openfl.tiled.display.Renderer;
 
-//#if !flash
-//import openfl.tiled.display.TilesheetRenderer;
-//#else
-//import openfl.tiled.display.CopyPixelsRenderer;
-//#end
+#if !flash
+import openfl.tiled.display.TilemapRenderer;
+#else
+import openfl.tiled.display.CopyPixelsRenderer;
+#end
+
 
 /**
  * This class represents a TILED map
@@ -54,10 +55,10 @@ class TiledMap {
 	public var heightInTiles(default, null):Int;
 
 	/** The map width in pixels */
-	public var totalWidth(get_totalWidth, null):Int;
+	public var totalWidth(get, null):Int;
 
 	/** The map height in pixels */
-	public var totalHeight(get_totalHeight, null):Int;
+	public var totalHeight(get, null):Int;
 
 	/** TILED orientation: Orthogonal or Isometric */
 	public var orientation(default, null):TiledMapOrientation;
@@ -88,11 +89,65 @@ class TiledMap {
 
 	public var backgroundColorSet(default, null):Bool = false;
 
-	//public var renderer(default, null):Renderer;
+	public var renderer(default, null):Renderer;
+
+	private function new(path:String, ?renderer:Renderer, ?render:Bool = false) {
+		super();
+
+		this.path = path;
+
+		var xml = Helper.getText(path);
 
 	public function new(xml:String) {
 		parseXML(xml);
-        }
+
+		this.renderer = renderer;
+
+		renderer.setTiledMap(this);
+
+		if(render) {
+			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		}
+	}
+
+	private function onAddedToStage(e:Event) {
+		renderer.clear(this);
+
+		for(layer in this.layers) {
+			renderer.drawLayer(this, layer);
+		}
+
+		for(imageLayer in this.imageLayers) {
+			renderer.drawImageLayer(this, imageLayer);
+		}
+	}
+
+	/**
+	 * Creates a new TiledMap from Assets
+	 * @param path The path to your asset
+	 * @param render Should openfl-tiled render the map?
+	 * @return A TiledMap object
+	 */
+	public static function fromAssets(path:String, ?render:Bool = true):TiledMap {
+		#if !flash
+		var renderer = new TilesheetRenderer();
+		#else
+		var renderer = new CopyPixelsRenderer();
+		#end
+
+		return new TiledMap(path, renderer, render);
+	}
+
+	/**
+	 * Creates a new TiledMap from Assets with an alternative Renderer
+	 * @param path The path to your asset
+	 * @param renderer Add your own renderer implementation here
+	 * @return A TiledMap object
+	 */
+	public static function fromAssetsWithAlternativeRenderer(path:String, ?renderer:Renderer,
+			?render:Bool = true):TiledMap {
+		return new TiledMap(path, renderer, render);
+	}
 
 	private function parseXML(xml:String) {
 		var xml = Xml.parse(xml).firstElement();

@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 class TiledObject {
 
@@ -50,10 +50,10 @@ class TiledObject {
 	public var height(default, null):Int;
 
 	/** Checks if this object has a polygons */
-	public var hasPolygon(get_hasPolygon, null):Bool;
+	public var hasPolygon(get, null):Bool;
 
 	/** Check if this object has a polylines */
-	public var hasPolyline(get_hasPolyline, null):Bool;
+	public var hasPolyline(get, null):Bool;
 
 	/** The polygon of this object. Default: null */
 	public var polygon(default, null):TiledPolygon;

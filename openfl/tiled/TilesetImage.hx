@@ -21,9 +21,9 @@
 // THE SOFTWARE.
 package openfl.tiled;
 
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.BitmapData;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 
 class TilesetImage {
 
@@ -34,10 +34,10 @@ class TilesetImage {
 	public var fileName(default, null):String;
 
 	/** The width of this image */
-	public var width(default, null):Int;
+	public var width(get, null):Int;
 
 	/** The height of this image */
-	public var height(default, null):Int;
+	public var height(get, null):Int;
 
 	/** The image as BitmapData */
 	public var texture(default, null):BitmapData;
@@ -65,13 +65,21 @@ class TilesetImage {
 		// load image
 		//this.texture = Helper.getBitmapData(this.source, mapPrefix);
 
-		//if(useTransparentColor) {
-		//	var rect = new Rectangle(0, 0, this.texture.width, this.texture.height);
-		//	var point = new Point(0, 0);
+		if(useTransparentColor) {
+			var rect = new Rectangle(0, 0, this.texture.width, this.texture.height);
+			var point = new Point(0, 0);
 
-		//	this.texture.threshold(this.texture, rect, point, "==",
-		//		threshold, transparent, 0xFFFFFFFF, true);
-		//}
+			this.texture.threshold(this.texture, rect, point, "==",
+				threshold, transparent, 0xFFFFFFFF, true);
+		}
+	}
+
+	private function get_width():Int {
+		return this.texture.width;
+	}
+
+	private function get_height():Int {
+		return this.texture.height;
 	}
 
 }
