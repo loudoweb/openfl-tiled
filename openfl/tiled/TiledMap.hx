@@ -32,11 +32,15 @@ import haxe.io.Path;
 
 import openfl.tiled.display.Renderer;
 
-#if !flash
 import openfl.tiled.display.TilemapRenderer;
-#else
 import openfl.tiled.display.CopyPixelsRenderer;
-#end
+import openfl.tiled.display.SimpleRenderer;
+
+enum ERenderer {
+	TILEMAP;
+	PIXELS;
+	SIMPLE;
+}
 
 /**
  * This class represents a TILED map
@@ -129,12 +133,16 @@ class TiledMap {
 	 * @param render Should openfl-tiled render the map?
 	 * @return A TiledMap object
 	 */
-	public static function fromAssets(path:String, ?render:Bool = true):TiledMap {
-		#if !flash
-		var renderer = new TilemapRenderer();
-		#else
-		var renderer = new CopyPixelsRenderer();
-		#end
+	public static function fromAssets(path:String, ?render:Bool = true, ?renderType = TILEMAP):TiledMap {
+		var renderer = switch(renderType)
+		{
+			case TILEMAP:
+				new TilemapRenderer();
+			case PIXELS: 
+				new CopyPixelsRenderer();
+			case SIMPLE:
+				new SimpleRenderer();
+		}
 
 		return new TiledMap(path, renderer, render);
 	}

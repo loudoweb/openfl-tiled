@@ -23,9 +23,9 @@ class TilemapRenderer implements Renderer {
 	public function setTiledMap(map:TiledMap):Void {
 		this.map = map;
 
-		/*for(tileset in map.tilesets) {
+		for(tileset in map.tilesets) {
 			this.tilesheets.set(tileset.firstGID, new OpenFlTileset(tileset.image.texture));
-		}*/
+		}
 	}
 
 	public function drawLayer(on:Dynamic, layer:Layer):Void {

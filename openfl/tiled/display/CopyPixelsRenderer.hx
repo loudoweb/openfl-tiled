@@ -35,7 +35,7 @@ class CopyPixelsRenderer implements Renderer {
 							case TiledMapOrientation.Orthogonal:
 								point = new Point(x * map.tileWidth, y * map.tileHeight);
 							case TiledMapOrientation.Isometric:
-								point = new Point((map.width + x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
+								point = new Point((map.sprite.width + x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
 						}
 
 						var tileset:Tileset = map.getTilesetByGID(nextGID);

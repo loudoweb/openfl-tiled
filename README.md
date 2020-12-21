@@ -6,7 +6,7 @@ openfl-tiled is a library, which gives openfl developers the ability to use the 
 How to install openfl-tiled?
 --------------------------
 
-`haxelib git openfl-tiled https://github.com/loudoweb/openfl-tiled dev`
+`haxelib git openfl-tiled https://github.com/loudoweb/openfl-tiled`
 	
 
 

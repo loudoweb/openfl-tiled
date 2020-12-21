@@ -46,4 +46,9 @@ class Tile {
     private function get_height():Int {
         return parent.parent.tileHeight;
     }
+	
+	public function toString():String
+	{
+		return 'Tiled Tile : gid: $gid, w: $width, h: $height, parent: ${parent.name}';
+	}
 }

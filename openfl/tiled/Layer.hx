@@ -164,7 +164,7 @@ class Layer {
 
 	private static function csvToArray(input:String):Array<Int> {
 		var result:Array<Int> = new Array<Int>();
-		var rows:Array<String> = StringTools.trim(input).split("\n");
+		var rows:Array<String> = StringTools.trim(input).split(",\n");
 		var row:String;
 
 		for (row in rows) {

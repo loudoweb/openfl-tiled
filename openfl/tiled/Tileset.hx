@@ -207,10 +207,20 @@ class Tileset {
 
 		return rect;
 	}
+	
+	inline public function getImageName(gid):String
+	{
+		return imageTiles.get(getCorrectedGID(gid));
+	}
+	
+	inline public function getCorrectedGID(gid:Int):Int
+	{
+		return gid - this.firstGID;
+	}
 
 	/** Returns a Point which specifies the position of the gid in this tileset (Not in pixels!) */
 	public function getTexturePositionByGID(gid:Int):Point {
-		var number = gid - this.firstGID;
+		var number = getCorrectedGID(gid);
 
 		return new Point(getInnerTexturePositionX(number), getInnerTexturePositionY(number));
 	}
