@@ -64,7 +64,7 @@ class ImageLayer {
 
 			if (child.nodeName == "image") {
 				var prefix = Path.directory(tiledMap.path) + "/";
-				image = new TilesetImage(child.get("source"), child.get("trans"), Std.parseInt(child.get("width")), Std.parseInt(child.get("height")), prefix);
+				image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
 			}
 		}
 

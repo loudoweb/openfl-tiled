@@ -38,12 +38,13 @@ import openfl.tiled.display.TilemapRenderer;
 import openfl.tiled.display.CopyPixelsRenderer;
 #end
 
-
 /**
  * This class represents a TILED map
  * @author Christopher Kaster
  */
 class TiledMap {
+	
+	public var sprite:Sprite;
 
 	/** The path of the map file */
 	public var path(default, null):String;
@@ -73,7 +74,7 @@ class TiledMap {
 	public var backgroundColor(default, null):UInt;
 
 	/** All tilesets the map is using */
-	public var tilesets(default, null):Array<String>;
+	public var tilesets(default, null):Array<Tileset>;
 
 	/** Contains all layers from this map */
 	public var layers(default, null):Array<Layer>;
@@ -92,33 +93,33 @@ class TiledMap {
 	public var renderer(default, null):Renderer;
 
 	private function new(path:String, ?renderer:Renderer, ?render:Bool = false) {
-		super();
 
 		this.path = path;
 
 		var xml = Helper.getText(path);
 
-	public function new(xml:String) {
 		parseXML(xml);
 
 		this.renderer = renderer;
 
 		renderer.setTiledMap(this);
 
-		if(render) {
-			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		sprite = new Sprite();
+		
+		if (render) {
+			sprite.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 	}
 
 	private function onAddedToStage(e:Event) {
-		renderer.clear(this);
+		renderer.clear(this.sprite);
 
 		for(layer in this.layers) {
-			renderer.drawLayer(this, layer);
+			renderer.drawLayer(this.sprite, layer);
 		}
 
 		for(imageLayer in this.imageLayers) {
-			renderer.drawImageLayer(this, imageLayer);
+			renderer.drawImageLayer(this.sprite, imageLayer);
 		}
 	}
 
@@ -130,7 +131,7 @@ class TiledMap {
 	 */
 	public static function fromAssets(path:String, ?render:Bool = true):TiledMap {
 		#if !flash
-		var renderer = new TilesheetRenderer();
+		var renderer = new TilemapRenderer();
 		#else
 		var renderer = new CopyPixelsRenderer();
 		#end
@@ -158,7 +159,7 @@ class TiledMap {
 			TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
 		this.tileWidth = Std.parseInt(xml.get("tilewidth"));
 		this.tileHeight = Std.parseInt(xml.get("tileheight"));
-		this.tilesets = new Array<String>();
+		this.tilesets = new Array<Tileset>();
 		this.layers = new Array<Layer>();
 		this.objectGroups = new Array<TiledObjectGroup>();
 		this.imageLayers = new Array<ImageLayer>();
@@ -182,23 +183,18 @@ class TiledMap {
 		for (child in xml) {
 			if(Helper.isValidElement(child)) {
 				if (child.nodeName == "tileset") {
-					var tileset:String = null;
+					var tileset:Tileset = null;
+
 					if (child.get("source") != null) {
-						//var prefix = Path.directory(this.path) + "/";
-						tileset = child.get("source");
+						var prefix = Path.directory(this.path) + "/";
+						tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
+					} else {
+						tileset = Tileset.fromGenericXml(this, child.toString());
 					}
 
-                                        // TODO expose child assets (or not?)
-					//if (child.get("source") != null) {
-					//	//var prefix = Path.directory(this.path) + "/";
-					//	tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
-					//} else {
-					//	tileset = Tileset.fromGenericXml(this, child.toString());
-					//}
+					tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
 
-					//tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
-					if(tileset != null)
-						this.tilesets.push(tileset);
+					this.tilesets.push(tileset);
 				} else if (child.nodeName == "properties") {
 					for (property in child) {
 						if (!Helper.isValidElement(property))
@@ -226,17 +222,17 @@ class TiledMap {
 	 * Returns the Tileset which contains the given GID.
 	 * @return The tileset which contains the given GID, or if it doesn't exist "null"
 	 */
-	//public function getTilesetByGID(gid:Int):Tileset {
-	//	var tileset:Tileset = null;
+	public function getTilesetByGID(gid:Int):Tileset {
+		var tileset:Tileset = null;
 
-	//	for(t in this.tilesets) {
-	//		if(gid >= t.firstGID) {
-	//			tileset = t;
-	//		}
-	//	}
+		for(t in this.tilesets) {
+			if(gid >= t.firstGID) {
+				tileset = t;
+			}
+		}
 
-	//	return tileset;
-	//}
+		return tileset;
+	}
 
 	/**
 	 * Returns the total Width of the map

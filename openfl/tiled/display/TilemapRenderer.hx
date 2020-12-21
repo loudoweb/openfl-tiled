@@ -8,7 +8,7 @@ import openfl.display.Tileset as OpenFlTileset;
 import openfl.display.Tilemap;
 import openfl.display.Tile;
 
-class TilesheetRenderer implements Renderer {
+class TilemapRenderer implements Renderer {
 
 	private var map:TiledMap;
 
@@ -23,9 +23,9 @@ class TilesheetRenderer implements Renderer {
 	public function setTiledMap(map:TiledMap):Void {
 		this.map = map;
 
-		for(tileset in map.tilesets) {
+		/*for(tileset in map.tilesets) {
 			this.tilesheets.set(tileset.firstGID, new OpenFlTileset(tileset.image.texture));
-		}
+		}*/
 	}
 
 	public function drawLayer(on:Dynamic, layer:Layer):Void {
@@ -46,7 +46,7 @@ class TilesheetRenderer implements Renderer {
 							case TiledMapOrientation.Orthogonal:
 								point = new Point(x * map.tileWidth, y * map.tileHeight);
 							case TiledMapOrientation.Isometric:
-								point = new Point((map.width + x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
+								point = new Point((map.sprite.width + x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
 						}
 
 						var tileset:Tileset = map.getTilesetByGID(nextGID);

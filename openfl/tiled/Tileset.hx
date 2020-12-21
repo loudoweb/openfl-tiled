@@ -29,6 +29,9 @@ import haxe.io.Path;
 
 class Tileset {
 
+	/** The TiledMap object this tileset belongs to */
+	public var tiledMap(default, null):TiledMap;
+
 	/** The first GID this tileset has */
 	public var firstGID(default, null):Int;
 
@@ -55,11 +58,17 @@ class Tileset {
 
 	/** All tiles with special properties */
 	public var propertyTiles(default, null):Map<Int, PropertyTile>;
+	
+	/** All indivual images in tiles */
+	public var imageTiles(default, null):Map<Int, String>;
+	
+	/** All tiles with object groups */
+	public var objectGroups(default, null):Map<Int, TiledObjectGroup>;
 
 	/** All terrain types */
 	public var terrainTypes(default, null):Array<TerrainType>;
 
-	/** The image of this tileset */
+	/** The image of this tileset (atlas texture if used) */
 	public var image(default, null):TilesetImage;
 
 	/** The tile offset */
@@ -67,9 +76,10 @@ class Tileset {
 
 	private function new(tiledMap:TiledMap, name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
 			properties:Map<String, String>, terrainTypes:Array<TerrainType>, image:TilesetImage, offset:Point,
-			propertyTiles:Map<Int, PropertyTile>) {
+			propertyTiles:Map<Int, PropertyTile>,
+			imageTiles:Map<Int, String>,
+			objectGroups:Map<Int, TiledObjectGroup>) {
 		this.tiledMap = tiledMap;
-
 		this.name = name;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -79,6 +89,8 @@ class Tileset {
 		this.image = image;
 		this.offset = offset;
 		this.propertyTiles = propertyTiles;
+		this.imageTiles = imageTiles;
+		this.objectGroups = objectGroups;
 	}
 
 	/** Sets the first GID. */
@@ -87,7 +99,7 @@ class Tileset {
 	}
 
 	/** Generates a new Tileset from the given Xml code */
-	public static function fromGenericXml(content:String):Tileset {
+	public static function fromGenericXml(tiledMap:TiledMap, content:String):Tileset {
 		var xml = Xml.parse(content).firstElement();
 
 		var name:String = xml.get("name");
@@ -96,6 +108,8 @@ class Tileset {
 		var spacing:Int = xml.exists("spacing") ? Std.parseInt(xml.get("spacing")) : 0;
 		var properties:Map<String, String> = new Map<String, String>();
 		var propertyTiles:Map<Int, PropertyTile> = new Map<Int, PropertyTile>();
+		var imageTiles:Map<Int, String> = new Map<Int, String>();
+		var objectGroups:Map<Int, TiledObjectGroup> = new Map<Int, TiledObjectGroup>();
 		var terrainTypes:Array<TerrainType> = new Array<TerrainType>();
 		var image:TilesetImage = null;
 
@@ -103,6 +117,7 @@ class Tileset {
 		var tileOffsetY:Int = 0;
 
 		for (child in xml.elements()) {
+			trace(child.nodeName);
 			if(Helper.isValidElement(child)) {
 				if (child.nodeName == "properties") {
 					for (property in child) {
@@ -118,7 +133,8 @@ class Tileset {
 				}
 
 				if (child.nodeName == "image") {
-					image = new TilesetImage(child.get("source"), child.get("trans"), Std.parseInt(child.get("width")), Std.parseInt(child.get("height")));
+					var prefix = Path.directory(tiledMap.path) + "/";
+					image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
 				}
 
 				if (child.nodeName == "terraintypes") {
@@ -147,6 +163,16 @@ class Tileset {
 
 									properties.set(property.get("name"), property.get("value"));
 								}
+							}else if (element.nodeName == "image") {
+								
+								imageTiles.set(id, element.get("source"));
+								
+							}else if (element.nodeName == "objectgroup") {
+								
+								var objectGroup = TiledObjectGroup.fromGenericXml(element);
+
+								objectGroups.set(id, objectGroup);
+								
 							}
 						}
 					}
@@ -157,8 +183,7 @@ class Tileset {
 		}
 
 		return new Tileset(tiledMap, name, tileWidth, tileHeight, spacing, properties, terrainTypes,
-
-			image, new Point(tileOffsetX, tileOffsetY), propertyTiles);
+			image, new Point(tileOffsetX, tileOffsetY), propertyTiles, imageTiles, objectGroups);
 	}
 
 	/** Returns the BitmapData of the given GID */
