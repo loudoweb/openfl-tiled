@@ -42,10 +42,12 @@ class TilesetImage {
 	/** The image as BitmapData */
 	public var texture(default, null):BitmapData;
 
-	public function new(source:String, trans:String, ?mapPrefix:String) {
+	public function new(source:String, trans:String, width:Int, height:Int, ?mapPrefix:String) {
 		this.source = source;
 		// get fileName from path
 		this.fileName = source.substr(source.lastIndexOf("/") + 1, source.length);
+		this.width = width;
+		this.height = height;
 
 		var useTransparentColor = false;
 		var threshold:UInt = -1;
@@ -61,7 +63,7 @@ class TilesetImage {
 		}
 
 		// load image
-		this.texture = Helper.getBitmapData(this.source, mapPrefix);
+		//this.texture = Helper.getBitmapData(this.source, mapPrefix);
 
 		if(useTransparentColor) {
 			var rect = new Rectangle(0, 0, this.texture.width, this.texture.height);

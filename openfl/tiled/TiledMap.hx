@@ -38,11 +38,12 @@ import openfl.tiled.display.TilemapRenderer;
 import openfl.tiled.display.CopyPixelsRenderer;
 #end
 
+
 /**
  * This class represents a TILED map
  * @author Christopher Kaster
  */
-class TiledMap extends Sprite {
+class TiledMap {
 
 	/** The path of the map file */
 	public var path(default, null):String;
@@ -72,7 +73,7 @@ class TiledMap extends Sprite {
 	public var backgroundColor(default, null):UInt;
 
 	/** All tilesets the map is using */
-	public var tilesets(default, null):Array<Tileset>;
+	public var tilesets(default, null):Array<String>;
 
 	/** Contains all layers from this map */
 	public var layers(default, null):Array<Layer>;
@@ -97,6 +98,7 @@ class TiledMap extends Sprite {
 
 		var xml = Helper.getText(path);
 
+	public function new(xml:String) {
 		parseXML(xml);
 
 		this.renderer = renderer;
@@ -156,7 +158,7 @@ class TiledMap extends Sprite {
 			TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
 		this.tileWidth = Std.parseInt(xml.get("tilewidth"));
 		this.tileHeight = Std.parseInt(xml.get("tileheight"));
-		this.tilesets = new Array<Tileset>();
+		this.tilesets = new Array<String>();
 		this.layers = new Array<Layer>();
 		this.objectGroups = new Array<TiledObjectGroup>();
 		this.imageLayers = new Array<ImageLayer>();
@@ -180,18 +182,23 @@ class TiledMap extends Sprite {
 		for (child in xml) {
 			if(Helper.isValidElement(child)) {
 				if (child.nodeName == "tileset") {
-					var tileset:Tileset = null;
-
+					var tileset:String = null;
 					if (child.get("source") != null) {
-						var prefix = Path.directory(this.path) + "/";
-						tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
-					} else {
-						tileset = Tileset.fromGenericXml(this, child.toString());
+						//var prefix = Path.directory(this.path) + "/";
+						tileset = child.get("source");
 					}
 
-					tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
+                                        // TODO expose child assets (or not?)
+					//if (child.get("source") != null) {
+					//	//var prefix = Path.directory(this.path) + "/";
+					//	tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source"), prefix));
+					//} else {
+					//	tileset = Tileset.fromGenericXml(this, child.toString());
+					//}
 
-					this.tilesets.push(tileset);
+					//tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
+					if(tileset != null)
+						this.tilesets.push(tileset);
 				} else if (child.nodeName == "properties") {
 					for (property in child) {
 						if (!Helper.isValidElement(property))
@@ -219,17 +226,17 @@ class TiledMap extends Sprite {
 	 * Returns the Tileset which contains the given GID.
 	 * @return The tileset which contains the given GID, or if it doesn't exist "null"
 	 */
-	public function getTilesetByGID(gid:Int):Tileset {
-		var tileset:Tileset = null;
+	//public function getTilesetByGID(gid:Int):Tileset {
+	//	var tileset:Tileset = null;
 
-		for(t in this.tilesets) {
-			if(gid >= t.firstGID) {
-				tileset = t;
-			}
-		}
+	//	for(t in this.tilesets) {
+	//		if(gid >= t.firstGID) {
+	//			tileset = t;
+	//		}
+	//	}
 
-		return tileset;
-	}
+	//	return tileset;
+	//}
 
 	/**
 	 * Returns the total Width of the map
