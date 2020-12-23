@@ -33,47 +33,44 @@ class SimpleRenderer implements Renderer
 	{
 		var bitmapData:BitmapData = null;
 		var gidCounter:Int = 0;
-trace(map.heightInTiles, map.widthInTiles);
-trace(map.tileWidth, map.tileHeight);
-trace(map.sprite.width, map.sprite.height);
+
+		
 		if(layer.visible) {
 			for(y in 0...map.heightInTiles) {
 				for(x in 0...map.widthInTiles) {
 					var nextGID = layer.tiles[gidCounter].gid;
-					trace(nextGID);
+
 					if (nextGID > 0)
 					{
+						var tileset:Tileset = map.getTilesetByGID(nextGID);
 						
+						var tilename = tileset.getImageName(nextGID);
+						
+						var bitmap = new Bitmap(Assets.getBitmapData(tilename), PixelSnapping.ALWAYS, true);
 					
 						var point:Point = new Point();
 
 						switch (map.orientation) {
-							case TiledMapOrientation.Orthogonal:
+							case TiledMapOrientation.ORTHOGONAL:
 								point = new Point(x * map.tileWidth, y * map.tileHeight);
-							case TiledMapOrientation.Isometric:
-								point = new Point(( x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
+							case TiledMapOrientation.ISOMETRIC:
+								point = new Point(( x - y) * map.tileWidth * 0.5 + (map.heightInTiles - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5 - (bitmap.height - map.tileHeight));
+							case TiledMapOrientation.STAGGERED:
+								if ((y & 1) == 0)
+								{
+									point = new Point(x * map.tileWidth, y * map.tileHeight * 0.5 - (bitmap.height - map.tileHeight));
+								}else{
+									point = new Point(x * map.tileWidth + 0.5 * map.tileWidth , y * map.tileHeight * 0.5 - (bitmap.height - map.tileHeight));
+								}
+								
 						}
 
-						var tileset:Tileset = map.getTilesetByGID(nextGID);
 						
-						var tilename = tileset.getImageName(nextGID);
-
-						trace(tilename);
-						
-						var bitmap = new Bitmap(Assets.getBitmapData(tilename), PixelSnapping.ALWAYS, true);
 						on.addChild(bitmap);
 						
 						bitmap.x = point.x;
 						bitmap.y = point.y;
-
-						/*if(map.orientation == TiledMapOrientation.Isometric) {
-							point.x += map.totalWidth/2;
-						}
-						
-						if(map.orientation == TiledMapOrientation.Isometric) {
-							bitmap.x -= map.totalWidth/2;
-						}*/
-						trace(point);
+						trace(nextGID, tilename, bitmap.x, bitmap.y);
 					}
 					
 					gidCounter++;
@@ -81,10 +78,6 @@ trace(map.sprite.width, map.sprite.height);
 			}
 		}
 
-		trace(on.numChildren);
-		
-
-		
 	}
 	
 	public function drawImageLayer(on:Dynamic, imageLayer:ImageLayer):Void {

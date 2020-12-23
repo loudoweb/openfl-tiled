@@ -217,6 +217,11 @@ class Tileset {
 	{
 		return gid - this.firstGID;
 	}
+	
+	inline public function getObjectGroups(gid:Int):TiledObjectGroup
+	{
+		return objectGroups.get(getCorrectedGID(gid));
+	}
 
 	/** Returns a Point which specifies the position of the gid in this tileset (Not in pixels!) */
 	public function getTexturePositionByGID(gid:Int):Point {

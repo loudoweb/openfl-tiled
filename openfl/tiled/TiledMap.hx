@@ -163,8 +163,7 @@ class TiledMap {
 
 		this.widthInTiles = Std.parseInt(xml.get("width"));
 		this.heightInTiles = Std.parseInt(xml.get("height"));
-		this.orientation = xml.get("orientation") == "orthogonal" ?
-			TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
+		this.orientation = Type.createEnum(TiledMapOrientation, xml.get("orientation").toUpperCase());
 		this.tileWidth = Std.parseInt(xml.get("tilewidth"));
 		this.tileHeight = Std.parseInt(xml.get("tileheight"));
 		this.tilesets = new Array<Tileset>();

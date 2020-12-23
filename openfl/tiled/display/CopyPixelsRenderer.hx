@@ -32,17 +32,19 @@ class CopyPixelsRenderer implements Renderer {
 						var point:Point = new Point();
 
 						switch (map.orientation) {
-							case TiledMapOrientation.Orthogonal:
+							case TiledMapOrientation.ORTHOGONAL:
 								point = new Point(x * map.tileWidth, y * map.tileHeight);
-							case TiledMapOrientation.Isometric:
+							case TiledMapOrientation.ISOMETRIC:
 								point = new Point((map.sprite.width + x - y - 1) * map.tileWidth * 0.5, (y + x) * map.tileHeight * 0.5);
+							case TiledMapOrientation.STAGGERED:
+								trace("not supported yet");
 						}
 
 						var tileset:Tileset = map.getTilesetByGID(nextGID);
 
 						var rect:Rectangle = tileset.getTileRectByGID(nextGID);
 
-						if(map.orientation == TiledMapOrientation.Isometric) {
+						if(map.orientation == TiledMapOrientation.ISOMETRIC) {
 							point.x += map.totalWidth/2;
 						}
 
@@ -57,7 +59,7 @@ class CopyPixelsRenderer implements Renderer {
 
 		var bitmap = new Bitmap(bitmapData);
 
-		if(map.orientation == TiledMapOrientation.Isometric) {
+		if(map.orientation == TiledMapOrientation.ISOMETRIC) {
 			bitmap.x -= map.totalWidth/2;
 		}
 
