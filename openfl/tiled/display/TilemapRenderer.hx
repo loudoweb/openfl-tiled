@@ -28,7 +28,7 @@ class TilemapRenderer implements Renderer {
 		}
 	}
 
-	public function drawLayer(on:Dynamic, layer:Layer):Void {
+	public function drawLayer(on:Sprite, layer:Layer):Void {
 		var sprite:Sprite = new Sprite();
 
 		var tileList:Array<Tile> = new Array<Tile>();

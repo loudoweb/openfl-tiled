@@ -2,6 +2,7 @@ package openfl.tiled.display;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
+import openfl.display.Sprite;
 import openfl.geom.Point;
 import openfl.tiled.ImageLayer;
 import openfl.tiled.Layer;
@@ -29,10 +30,13 @@ class SimpleRenderer implements Renderer
 		this.map = map;
 	}
 	
-	public function drawLayer(on:Dynamic, layer:Layer):Void 
+	public function drawLayer(on:Sprite, layer:Layer):Void 
 	{
 		var bitmapData:BitmapData = null;
 		var gidCounter:Int = 0;
+		
+		var layerSprite = new Sprite();
+		layerSprite.name = layer.name;
 
 		
 		if(layer.visible) {
@@ -66,7 +70,7 @@ class SimpleRenderer implements Renderer
 						}
 
 						
-						on.addChild(bitmap);
+						layerSprite.addChild(bitmap);
 						
 						bitmap.x = point.x;
 						bitmap.y = point.y;
@@ -77,6 +81,7 @@ class SimpleRenderer implements Renderer
 				}
 			}
 		}
+		on.addChild(layerSprite);
 
 	}
 	

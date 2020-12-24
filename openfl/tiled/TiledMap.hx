@@ -302,4 +302,46 @@ class TiledMap {
 
 		return null;
 	}
+	
+	public function getXIndex(posX:Float):Int
+	{
+		switch (orientation) {
+			case TiledMapOrientation.ORTHOGONAL:
+				return Std.int(posX / tileWidth);
+			case TiledMapOrientation.ISOMETRIC:
+				//point = new Point(( x - y) * tileWidth * 0.5 + (heightInTiles - 1) * tileWidth * 0.5, (y + x) * tileHeight * 0.5 - (bitmap.height - tileHeight));
+				return 0;
+			case TiledMapOrientation.STAGGERED:
+				/*if ((y & 1) == 0)
+				{
+					point = new Point(x * tileWidth, y * tileHeight * 0.5 - (bitmap.height - tileHeight));
+				}else{
+					point = new Point(x * tileWidth + 0.5 * tileWidth , y * tileHeight * 0.5 - (bitmap.height - tileHeight));
+				}*/
+				return 0;
+				
+		}
+	}
+	
+	public function getYIndex(posY:Float):Int
+	{
+		switch (orientation) {
+			case TiledMapOrientation.ORTHOGONAL:
+				return Std.int(posY / tileHeight);
+			case TiledMapOrientation.ISOMETRIC:
+				return 0;
+				//point = new Point(( x - y) * tileWidth * 0.5 + (heightInTiles - 1) * tileWidth * 0.5, (y + x) * tileHeight * 0.5 - (bitmap.height - tileHeight));
+			case TiledMapOrientation.STAGGERED:
+				return Std.int(posY /  (tileHeight * 0.5));
+				
+				
+		}
+	}
+	
+	public function getZIndex(posX:Float, posY:Float):Int
+	{
+		var x = getXIndex(posX);
+		var y = getXIndex(posY);
+		return 0;
+	}
 }
