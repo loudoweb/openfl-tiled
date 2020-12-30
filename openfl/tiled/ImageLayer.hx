@@ -29,24 +29,33 @@ class ImageLayer {
 	public var name(default, null):String;
 	public var opacity(default, null):Float;
 	public var visible(default, null):Bool;
+	public var offsetx(default, null):Int;
+	public var offsety(default, null):Int;
 
 	public var properties(default, null):Map<String, String>;
 	public var image(default, null):TilesetImage;
 
-	private function new(tiledMap:TiledMap, name:String, opacity:Float, visible:Bool, properties:Map<String, String>,
-			image:TilesetImage) {
+	private function new(tiledMap:TiledMap, name:String, opacity:Float, visible:Bool,
+			properties:Map<String, String>,
+			image:TilesetImage,
+			offsetx:Int, offsety:Int) {
+				
 		this.tiledMap = tiledMap;
 		this.name = name;
 		this.opacity = opacity;
 		this.visible = visible;
 		this.properties = properties;
 		this.image = image;
+		this.offsetx = offsetx;
+		this.offsety = offsety;
 	}
 
 	public static function fromGenericXml(tiledMap:TiledMap, xml:Xml):ImageLayer {
 		var name:String = xml.get("name");
 		var opacity:Float = xml.exists("opacity") ? Std.parseFloat(xml.get("opacity")) : 1.0;
-		var visible:Bool = xml.exists("visible") ? Std.parseInt("visible") == 1 : false;
+		var visible:Bool = xml.exists("visible") ? Std.parseInt(xml.get("visible")) == 1 : false;
+		var offsetx:Int = xml.exists("offsetx") ? Std.parseInt(xml.get("offsetx")) : 0;
+		var offsety:Int = xml.exists("offsety") ? Std.parseInt(xml.get("offsety")) : 0;
 
 		var properties = new Map<String, String>();
 		var image:TilesetImage = null;
@@ -63,11 +72,12 @@ class ImageLayer {
 			}
 
 			if (child.nodeName == "image") {
-				var prefix = Path.directory(tiledMap.path) + "/";
-				image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
+				//var prefix = Path.directory(tiledMap.path) + "/";
+				//image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
+				image = new TilesetImage(child.get("source"), child.get("trans"));
 			}
 		}
 
-		return new ImageLayer(tiledMap, name, opacity, visible, properties, image);
+		return new ImageLayer(tiledMap, name, opacity, visible, properties, image, offsetx, offsety);
 	}
 }
