@@ -66,13 +66,13 @@ class CopyPixelsRenderer implements Renderer {
 		on.addChild(bitmap);
 	}
 
-	public function drawImageLayer(on:Dynamic, imageLayer:ImageLayer):Void {
+	public function drawImageLayer(on:Sprite, imageLayer:ImageLayer):Void {
 		var bitmap = new Bitmap(imageLayer.image.texture);
 
 		on.addChild(bitmap);
 	}
 
-	public function clear(on:Dynamic):Void {
+	public function clear(on:Sprite):Void {
 		while(on.numChildren > 0){
 			on.removeChildAt(0);
 		}

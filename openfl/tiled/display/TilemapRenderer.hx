@@ -104,7 +104,7 @@ class TilemapRenderer implements Renderer {
 		on.addChild(sprite);
 	}
 
-	public function drawImageLayer(on:Dynamic, imageLayer:ImageLayer):Void {
+	public function drawImageLayer(on:Sprite, imageLayer:ImageLayer):Void {
 		var sprite = new Sprite();
 
 		var tileset:OpenFlTileset = new OpenFlTileset(imageLayer.image.texture);
@@ -119,7 +119,7 @@ class TilemapRenderer implements Renderer {
 		on.addChild(sprite);
 	}
 
-	public function clear(on:Dynamic):Void {
+	public function clear(on:Sprite):Void {
 		while(on.numChildren > 0){
 			on.removeChildAt(0);
 		}

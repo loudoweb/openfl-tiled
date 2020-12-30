@@ -30,5 +30,15 @@ class PropertyTile {
 		this.id = id;
 		this.properties = properties;
 	}
+	
+	public function get(name:String):String
+	{
+		return properties.get(name);
+	}
+	
+	public function exists(name:String):Bool
+	{
+		return properties.exists(name);
+	}
 
 }

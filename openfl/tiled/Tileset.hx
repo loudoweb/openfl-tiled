@@ -56,14 +56,8 @@ class Tileset {
 	/** All properties this Tileset contains */
 	public var properties(default, null):Map<String, String>;
 
-	/** All tiles with special properties */
-	public var propertyTiles(default, null):Map<Int, PropertyTile>;
-	
-	/** All indivual images in tiles */
-	public var imageTiles(default, null):Map<Int, String>;
-	
-	/** All tiles with object groups */
-	public var objectGroups(default, null):Map<Int, TiledObjectGroup>;
+	/** All tiles **/
+	public var tiles:Map<Int, TileData>;
 
 	/** All terrain types */
 	public var terrainTypes(default, null):Array<TerrainType>;
@@ -76,9 +70,7 @@ class Tileset {
 
 	private function new(tiledMap:TiledMap, name:String, tileWidth:Int, tileHeight:Int, spacing:Int,
 			properties:Map<String, String>, terrainTypes:Array<TerrainType>, image:TilesetImage, offset:Point,
-			propertyTiles:Map<Int, PropertyTile>,
-			imageTiles:Map<Int, String>,
-			objectGroups:Map<Int, TiledObjectGroup>) {
+			tiles:Map<Int, TileData> ) {
 		this.tiledMap = tiledMap;
 		this.name = name;
 		this.tileWidth = tileWidth;
@@ -88,9 +80,7 @@ class Tileset {
 		this.terrainTypes = terrainTypes;
 		this.image = image;
 		this.offset = offset;
-		this.propertyTiles = propertyTiles;
-		this.imageTiles = imageTiles;
-		this.objectGroups = objectGroups;
+		this.tiles = tiles;
 	}
 
 	/** Sets the first GID. */
@@ -107,12 +97,10 @@ class Tileset {
 		var tileHeight:Int = Std.parseInt(xml.get("tileheight"));
 		var spacing:Int = xml.exists("spacing") ? Std.parseInt(xml.get("spacing")) : 0;
 		var properties:Map<String, String> = new Map<String, String>();
-		var propertyTiles:Map<Int, PropertyTile> = new Map<Int, PropertyTile>();
-		var imageTiles:Map<Int, String> = new Map<Int, String>();
-		var objectGroups:Map<Int, TiledObjectGroup> = new Map<Int, TiledObjectGroup>();
+		var tiles = new Map<Int, TileData>();
 		var terrainTypes:Array<TerrainType> = new Array<TerrainType>();
 		var image:TilesetImage = null;
-
+		
 		var tileOffsetX:Int = 0;
 		var tileOffsetY:Int = 0;
 
@@ -133,8 +121,10 @@ class Tileset {
 				}
 
 				if (child.nodeName == "image") {
-					var prefix = Path.directory(tiledMap.path) + "/";
-					image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
+					//var prefix = Path.directory(tiledMap.path) + "/";
+					//image = new TilesetImage(child.get("source"), child.get("trans"), prefix);
+					trace(child.get("source"));
+					image = new TilesetImage(child.get("source"), child.get("trans"));
 				}
 
 				if (child.nodeName == "terraintypes") {
@@ -149,41 +139,16 @@ class Tileset {
 				}
 
 				if (child.nodeName == "tile") {
-					var id:Int = Std.parseInt(child.get("id"));
-					var properties:Map<String, String> = new Map<String, String>();
-
-					for (element in child) {
-
-						if(Helper.isValidElement(element)) {
-							if (element.nodeName == "properties") {
-								for (property in element) {
-									if (!Helper.isValidElement(property)) {
-										continue;
-									}
-
-									properties.set(property.get("name"), property.get("value"));
-								}
-							}else if (element.nodeName == "image") {
-								
-								imageTiles.set(id, element.get("source"));
-								
-							}else if (element.nodeName == "objectgroup") {
-								
-								var objectGroup = TiledObjectGroup.fromGenericXml(element);
-
-								objectGroups.set(id, objectGroup);
-								
-							}
-						}
-					}
-
-					propertyTiles.set(id, new PropertyTile(id, properties));
+					
+					var tiledata = TileData.fromGenericXml(child);
+					tiles.set(tiledata.id, tiledata); 
+					
 				}
 			}
 		}
 
 		return new Tileset(tiledMap, name, tileWidth, tileHeight, spacing, properties, terrainTypes,
-			image, new Point(tileOffsetX, tileOffsetY), propertyTiles, imageTiles, objectGroups);
+			image, new Point(tileOffsetX, tileOffsetY), tiles);
 	}
 
 	/** Returns the BitmapData of the given GID */
@@ -208,19 +173,15 @@ class Tileset {
 		return rect;
 	}
 	
-	inline public function getImageName(gid):String
+	inline public function getTile(gid:Int):TileData
 	{
-		return imageTiles.get(getCorrectedGID(gid));
+		var id = getCorrectedGID(gid);
+		return tiles.exists(id) ? tiles.get(id) : null;
 	}
 	
 	inline public function getCorrectedGID(gid:Int):Int
 	{
 		return gid - this.firstGID;
-	}
-	
-	inline public function getObjectGroups(gid:Int):TiledObjectGroup
-	{
-		return objectGroups.get(getCorrectedGID(gid));
 	}
 
 	/** Returns a Point which specifies the position of the gid in this tileset (Not in pixels!) */

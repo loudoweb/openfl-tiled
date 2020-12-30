@@ -85,13 +85,15 @@ class SimpleRenderer implements Renderer
 
 	}
 	
-	public function drawImageLayer(on:Dynamic, imageLayer:ImageLayer):Void {
-		trace("there is no image layer in this renderer");
+	public function drawImageLayer(on:Sprite, imageLayer:ImageLayer):Void {
+		var bitmap = new Bitmap(imageLayer.image.texture);
+
+		on.addChild(bitmap);
 	}
 
-	public function clear(on:Dynamic):Void {
+	public function clear(on:Sprite):Void {
 		if(on.numChildren > 0){
-			on.removeAllChildren();
+			on.removeChildren();
 		}
 	}
 	

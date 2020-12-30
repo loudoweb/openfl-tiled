@@ -33,14 +33,6 @@ import haxe.io.Path;
 import openfl.tiled.display.Renderer;
 
 import openfl.tiled.display.TilemapRenderer;
-import openfl.tiled.display.CopyPixelsRenderer;
-import openfl.tiled.display.SimpleRenderer;
-
-enum ERenderer {
-	TILEMAP;
-	PIXELS;
-	SIMPLE;
-}
 
 /**
  * This class represents a TILED map
@@ -118,32 +110,25 @@ class TiledMap {
 	private function onAddedToStage(e:Event) {
 		renderer.clear(this.sprite);
 
-		for(layer in this.layers) {
-			renderer.drawLayer(this.sprite, layer);
-		}
-
 		for(imageLayer in this.imageLayers) {
 			renderer.drawImageLayer(this.sprite, imageLayer);
+		}
+		
+		for(layer in this.layers) {
+			renderer.drawLayer(this.sprite, layer);
 		}
 	}
 
 	/**
 	 * Creates a new TiledMap from Assets
 	 * @param path The path to your asset
-	 * @param render Should openfl-tiled render the map?
+	 * @param renderer Use the renderer that fits best your project default TilemapRenderer
+	 * @param render Should openfl-tiled render the map? Default true
 	 * @return A TiledMap object
 	 */
-	public static function fromAssets(path:String, ?render:Bool = true, ?renderType = TILEMAP):TiledMap {
-		var renderer = switch(renderType)
-		{
-			case TILEMAP:
-				new TilemapRenderer();
-			case PIXELS: 
-				new CopyPixelsRenderer();
-			case SIMPLE:
-				new SimpleRenderer();
-		}
-
+	public static function fromAssets(path:String, ?renderer:Renderer, ?render:Bool = true):TiledMap {
+		if (renderer == null)
+			renderer = new TilemapRenderer();
 		return new TiledMap(path, renderer, render);
 	}
 
